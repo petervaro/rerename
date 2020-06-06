@@ -1,7 +1,20 @@
 # ReRename
 
-Rename files with regular expressions.
+Smart file renaming with regular expressions.
 
+## Installation
+
+```bash
+$ git clone https://gitlab.com/petervaro/rerename.git
+$ cd rerename
+$ cargo install --path .
+```
+
+## Usage
+
+```bash
+$ rerename --help
+```
 
 ## License
 

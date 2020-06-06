@@ -1,8 +1,9 @@
 [package]
 name = "rerename"
-version = "0.1.0"
-authors = ["petervaro <hello@petervaro.com>"]
+version = "0.2.0"
+authors = ["Peter Varo <hello@petervaro.com>"]
 edition = "2018"
+description = "Smart file renaming with regular expressions"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
