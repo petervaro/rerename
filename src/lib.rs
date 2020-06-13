@@ -1,4 +1,5 @@
 mod error;
+mod format;
 mod referencer;
 mod converter;
 mod comparable;
@@ -11,3 +12,7 @@ pub use error::{
 pub use file_names::FileNames;
 pub use referencer::Referencer;
 pub use converter::Converter;
+pub use format::{
+    Formatter,
+    Variables,
+};

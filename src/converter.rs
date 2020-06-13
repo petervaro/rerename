@@ -31,11 +31,7 @@ impl Converter
             {
                 "int" => Self { converter: Self::to_comparable_integer },
                 "str" => Self { converter: Self::to_comparable_string },
-                _ =>
-                {
-                    let message = format!("Invalid `type`: {}", kind);
-                    Err(crate::Error::SimpleStringError(message))?
-                },
+                _ => return Err(format!("Invalid `type`: {}", kind).into()),
             };
 
         Ok(converter)

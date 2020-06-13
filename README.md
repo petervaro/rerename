@@ -16,6 +16,29 @@ $ cargo install --path .
 $ rerename --help
 ```
 
+## Example
+
+```bash
+$ ls -l
+03 - foo.flac
+04 - bar.flac
+1 - hello.flac
+2 - world.flac
+10 - ham.flac
+22 - spam.flac
+
+$ rerename -s '(\d+)(.*)' -t '@{index:0>2}$2' -o '1:int' -i 1 *.flac
+1 - hello.flac -> 01 - hello.flac
+2 - world.flac -> 02 - world.flac
+03 - foo.flac -> 03 - foo.flac
+04 - bar.flac -> 04 - bar.flac
+10 - ham.flac -> 05 - ham.flac
+22 - spam.flac -> 06 - spam.flac
+
+Checked 6 file(s)
+Renamed 4 file(s)
+```
+
 ## License
 
 Copyright &copy; 2020 Peter Varo

@@ -18,11 +18,13 @@ use rerename::{
     FileNames,
     Referencer,
     Converter,
+    Formatter,
+    Variables,
 };
 
 
 /*----------------------------------------------------------------------------*/
-const LICENSE: &'static str = "\
+const LICENSE: &str = "\
 LICENSE:
     Copyright (C) 2020 Peter Varo
 
@@ -78,10 +80,12 @@ fn arguments<'a>() -> ArgMatches<'a>
         {
             let help =
                 "Replace pattern (groups referenceed as `$N` (e.g. `$1` or \
-                 `$2`) or `$name` if `(?P<name>)` is was used in the matching \
+                 `$2`) or `$name` if `(?P<name>)` was used in the matching \
                  pattern.  The special variable `@{index}` could be used to \
                  insert index number, which starts from `index-start` and \
-                 increases on every successful match";
+                 increases on every file from the input, moreover it can take \
+                 a format specifier for padding, e.g. `@{index:0>2}` which \
+                 will produce indices as follows: 01, 02, .., 99, 100";
 
             Arg::with_name("target").short("t")
                                     .long("target")
@@ -151,7 +155,7 @@ fn arguments<'a>() -> ArgMatches<'a>
 
 
 /*----------------------------------------------------------------------------*/
-fn dumb_rename<P, Q>(_: P, _: Q) -> io::Result<()>
+fn stub_rename<P, Q>(_: P, _: Q) -> io::Result<()>
     where P: AsRef<Path>,
           Q: AsRef<Path>
 {
@@ -202,7 +206,7 @@ fn main() -> rerename::Result<()>
     let source = Regex::new(arguments.value_of("source").unwrap())?;
     let target = arguments.value_of("target").unwrap();
     let rename =
-        if arguments.is_present("dry_run") { dumb_rename } else { rename };
+        if arguments.is_present("dry_run") { stub_rename } else { rename };
     let old_names = arguments.values_of("file_names").unwrap();
 
     let mut collected = Vec::new();
@@ -217,7 +221,7 @@ fn main() -> rerename::Result<()>
                     {
                         [reference] => (*reference, "str"),
                         [reference, kind] => (*reference, *kind),
-                        _ => todo!()
+                        _ => return Err("Invalid order-by value".into()),
                     };
 
                 let referencer =
@@ -238,25 +242,35 @@ fn main() -> rerename::Result<()>
             None => old_names.into(),
         };
 
-    let mut index = arguments.value_of("index_start")
-                             .unwrap()
-                             .parse::<usize>()?;
+    let index_start = arguments.value_of("index_start")
+                               .unwrap()
+                               .parse::<usize>()?;
+    let mut variables = Variables::new(index_start);
+    let formatter = Formatter::new(target, &variables)?;
+    let mut target = String::new();
     let mut renamed = 0usize;
+    let mut checked = 0usize;
+
     for old_name in old_names
     {
-
-        let target = target.replace("@{index}", format!("{}", index).as_str());
+        target.clear();
+        formatter.format(&variables, &mut target).unwrap();
         let new_name = source.replace(old_name, target.as_str());
+
+        println!("{} -> {} ", old_name, &new_name);
 
         if old_name != new_name
         {
-            println!("{} -> {} ", old_name, &new_name);
             rename(old_name, new_name.to_string())?;
             renamed += 1;
-            index += 1;
         }
+
+        *variables.index_mut() += 1;
+        checked += 1;
     }
 
+    println!();
+    println!("Checked {} file(s)", checked);
     println!("Renamed {} file(s)", renamed);
     Ok(())
 }

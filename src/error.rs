@@ -10,8 +10,6 @@ use std::{
     num::ParseIntError,
 };
 
-use regex;
-
 
 /*----------------------------------------------------------------------------*/
 pub type Result<T> = result::Result<T, Error>;
@@ -89,8 +87,22 @@ impl From<ParseIntError> for Error
 impl From<String> for Error
 {
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    fn from(error: String) -> Self
+    fn from(message: String) -> Self
     {
-        Self::SimpleStringError(error)
+        Self::SimpleStringError(message)
+    }
+}
+
+
+/*----------------------------------------------------------------------------*/
+// TODO: Hopefully the insanely stupid compilation error about "forward
+//       compatibility" (https://github.com/rust-lang/rfcs/issues/2758) will be
+//       removed, so this could be `<T: Into<String>> From<T> for Error`
+impl From<&str> for Error
+{
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    fn from(message: &str) -> Self
+    {
+        Self::SimpleStringError(message.into())
     }
 }
