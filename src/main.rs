@@ -255,7 +255,7 @@ fn main() -> rerename::Result<()>
     {
         target.clear();
         formatter.format(&variables, &mut target).unwrap();
-        let new_name = source.replace(old_name, target.as_str());
+        let new_name = source.replace_all(old_name, target.as_str());
 
         println!("{} -> {} ", old_name, &new_name);
 

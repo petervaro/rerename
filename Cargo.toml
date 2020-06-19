@@ -1,6 +1,6 @@
 [package]
 name = "rerename"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Peter Varo <hello@petervaro.com>"]
 edition = "2018"
 description = "Smart file renaming with regular expressions"
