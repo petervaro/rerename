@@ -1,6 +1,6 @@
 [package]
 name = "rerename"
-version = "0.3.1"
+version = "0.4.0"
 authors = ["Peter Varo <hello@petervaro.com>"]
 edition = "2018"
 description = "Smart file renaming with regular expressions"
@@ -8,3 +8,4 @@ description = "Smart file renaming with regular expressions"
 [dependencies]
 regex = "1.3"
 clap = "2.33"
+lazy_static = "1.4"

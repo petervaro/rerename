@@ -20,23 +20,23 @@ $ rerename --help
 
 ```bash
 $ ls -l
-03 - foo.flac
-04 - bar_baz.flac
-1 - hello_there.flac
-2 - world.flac
-10 - ham.flac
-22 - spam_and_leek.flac
+03-foo.flac
+04-bar_baz.flac
+1-hello_there.flac
+2-world.flac
+10-ham.flac
+22-spam_and_leek.flac
 
-$ rerename -s '^(\d+)(.*)$' -t '@{index:0>2}$2' -o '1:int' -i 1 *.flac
-1 - hello_there.flac -> 01 - hello_there.flac
-2 - world.flac -> 02 - world.flac
-03 - foo.flac -> 03 - foo.flac
-04 - bar_baz.flac -> 04 - bar_baz.flac
-10 - ham.flac -> 05 - ham.flac
-22 - spam_and_leek.flac -> 06 - spam_and_leek.flac
+$ rerename -s '^(\d+)-(.*)$' -t '@{index:0>2} - $2' -o '1:int' -i 1 *.flac
+1-hello_there.flac -> 01 - hello_there.flac
+2-world.flac -> 02 - world.flac
+03-foo.flac -> 03 - foo.flac
+04-bar_baz.flac -> 04 - bar_baz.flac
+10-ham.flac -> 05 - ham.flac
+22-spam_and_leek.flac -> 06 - spam_and_leek.flac
 
 Checked 6 file(s)
-Renamed 4 file(s)
+Renamed 6 file(s)
 
 $ ls -l
 01 - hello_there.flac
@@ -64,6 +64,44 @@ $ ls -l
 04 - bar baz.flac
 05 - ham.flac
 06 - spam and leek.flac
+
+$ rerename -s '.*' -t '$0' -T title *.flac
+01 - hello there.flac -> 01 - Hello There.Flac
+02 - world.flac -> 02 - World.Flac
+03 - foo.flac -> 03 - Foo.Flac
+04 - bar baz.flac -> 04 - Bar Baz.Flac
+05 - ham.flac -> 05 - Ham.Flac
+06 - spam and leek.flac -> 06 - Spam And Leek.Flac
+
+Checked 6 file(s)
+Renamed 6 file(s)
+
+$ ls -l
+01 - Hello There.Flac
+02 - World.Flac
+03 - Foo.Flac
+04 - Bar Baz.Flac
+05 - Ham.Flac
+06 - Spam And Leek.Flac
+
+$ rerename -s '(.*?)\.Flac' -t '$1.flac' *.Flac
+01 - Hello There.Flac -> 01 - Hello There.flac
+02 - World.Flac -> 02 - World.flac
+03 - Foo.Flac -> 03 - Foo.flac
+04 - Bar Baz.Flac -> 04 - Bar Baz.flac
+05 - Ham.Flac -> 05 - Ham.flac
+06 - Spam And Leek.Flac -> 06 - Spam And Leek.flac
+
+Checked 6 file(s)
+Renamed 6 file(s)
+
+$ ls -l
+01 - Hello There.flac
+02 - World.flac
+03 - Foo.flac
+04 - Bar Baz.flac
+05 - Ham.flac
+06 - Spam And Leek.flac
 ```
 
 ## License

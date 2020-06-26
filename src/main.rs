@@ -9,6 +9,7 @@ use clap::{
     App,
     Arg,
     ArgMatches,
+    Values,
 };
 
 use regex::Regex;
@@ -20,6 +21,7 @@ use rerename::{
     Converter,
     Formatter,
     Variables,
+    Transformers,
 };
 
 
@@ -126,6 +128,27 @@ fn arguments<'a>() -> ArgMatches<'a>
                                       .help(help)
         };
 
+    let transform =
+        {
+            let help =
+                "Transforms the matched text with the specified \
+                 TRANSFORMATION.  The following TRANSFORMATIONs are available: \
+                 `upper` (transforms all characters to uppercase), `lower` \
+                 (transforms all characters to lowercase), `title` \
+                 (transforms first characters of every word uppercase), and \
+                 `capital` (transforms the first characters to uppercase)";
+
+            Arg::with_name("transform").short("T")
+                                       .long("transform")
+                                       .value_name("TRANSFORMATION")
+                                       .takes_value(true)
+                                       .possible_value(Transformers::UPPERCASE)
+                                       .possible_value(Transformers::LOWERCASE)
+                                       .possible_value(Transformers::TITLECASE)
+                                       .possible_value(Transformers::CAPITALISED)
+                                       .help(help)
+        };
+
     let file_names =
         {
             let help = "The files the `source` pattern \
@@ -147,6 +170,7 @@ fn arguments<'a>() -> ArgMatches<'a>
                         .arg(target)
                         .arg(order_by)
                         .arg(index_start)
+                        .arg(transform)
                         .arg(file_names)
                         .after_help(LICENSE)
                         .set_term_width(80)
@@ -247,6 +271,9 @@ fn main() -> rerename::Result<()>
                                .parse::<usize>()?;
     let mut variables = Variables::new(index_start);
     let formatter = Formatter::new(target, &variables)?;
+    let transformers =
+        Transformers::from(arguments.values_of("transform")
+                                    .unwrap_or_else(Values::default));
     let mut target = String::new();
     let mut renamed = 0usize;
     let mut checked = 0usize;
@@ -255,13 +282,14 @@ fn main() -> rerename::Result<()>
     {
         target.clear();
         formatter.format(&variables, &mut target).unwrap();
-        let new_name = source.replace_all(old_name, target.as_str());
+        let new_name =
+            transformers.apply(&source.replace_all(old_name, target.as_str()));
 
         println!("{} -> {} ", old_name, &new_name);
 
         if old_name != new_name
         {
-            rename(old_name, new_name.to_string())?;
+            rename(old_name, new_name)?;
             renamed += 1;
         }
 

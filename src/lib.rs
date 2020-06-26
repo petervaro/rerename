@@ -3,6 +3,7 @@ mod format;
 mod referencer;
 mod converter;
 mod comparable;
+mod transformers;
 mod file_names;
 
 pub use error::{
@@ -16,3 +17,4 @@ pub use format::{
     Formatter,
     Variables,
 };
+pub use transformers::Transformers;
